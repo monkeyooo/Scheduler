@@ -1,0 +1,61 @@
+//Using bootJar package jar
+plugins {
+    id 'org.springframework.boot' version '2.3.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+    id 'war'
+}
+
+group = 'com.chuck.scheduler'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    //Thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // log
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-logging', version: '2.2.6.RELEASE'
+    compile group: 'org.codehaus.janino', name: 'janino', version: '3.1.2'
+
+    //JWT
+    compile group: 'org.springframework', name: 'spring-web', version: '5.2.5.RELEASE'
+
+
+    //hibernate
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.3.0.RELEASE'
+    compile "org.hibernate:hibernate-c3p0:5.4.10.Final"
+    compile "org.hibernate:hibernate-core:5.4.10.Final"
+    compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final"
+    compile "org.hibernate.common:hibernate-commons-annotations:5.1.0.Final"
+    compile "org.hibernate:hibernate-osgi:5.4.10.Final"
+    compile "org.hibernate:hibernate-validator:6.1.0.Final"
+
+    //mysql
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.20'
+
+
+}
+
+test {
+    useJUnitPlatform()
+}
