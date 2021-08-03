@@ -1,0 +1,103 @@
+<configuration debug="false" scan="true" scanPeriod="600 seconds" packagingData="false">
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" />
+
+    <springProperty scope="context" name="LEVEL_ROOT" source="logging.level.root" value="INFO"/>
+
+    <property name="ROOT_LOG_DIR" value="./logs" />
+
+<!--    <property name="ROOT_LOG_DIR_MAC" value="log" /> -->
+
+    <contextName>${APP_NAME}</contextName>
+
+<!--    <if condition='property("os.name").contains("Mac")'>
+        <then>
+            <property name="ROOT_LOG_DIR" value="${ROOT_LOG_DIR_MAC}" />
+        </then>
+    </if>
+-->
+    <property name="APP_LOG_DIR" value="${ROOT_LOG_DIR}/${APP_NAME}" />
+
+    <!-- General layout pattern: date time timezone level app thread file:line
+        marker message -->
+    <property name="GENERAL_LAYOUT_PATTERN"
+              value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %-5level {%marker} [%15.15thread] %-40.40logger{39}: %msg%n" ></property>
+
+
+    <!--
+    <property name="DEBUG_LAYOUT_PATTERN"
+        value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %-5level [%15.15thread] %-65(%contextName[%marker] %-40.40logger{39}): %msg \\(%F:%L\\)%n" />
+    -->
+
+    <property name="DEBUG_LAYOUT_PATTERN"
+              value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %-5level {%marker} [%15.15thread] %-40.40logger{39}: %msg%n \\(%F:%L\\)%n" />
+
+    <!-- Console Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>${DEBUG_LAYOUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE-ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_LOG_DIR}/all.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${APP_LOG_DIR}/all.%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <!-- keep 30 days' worth of history capped at 3GB total size -->
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>336</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${GENERAL_LAYOUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE-ALL-DATE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+　　  <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+　　      <fileNamePattern>${APP_LOG_DIR}/all.%d{yyyy-MM-dd}.log</fileNamePattern>
+　　          <maxHistory>30</maxHistory>
+　　  </rollingPolicy>
+　　  <encoder>
+　　      <pattern>${GENERAL_LAYOUT_PATTERN}</pattern>
+　　  </encoder>
+　　</appender>
+
+    <appender name="FILE-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <file>${APP_LOG_DIR}/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${APP_LOG_DIR}/error.%d{yyyyMMdd}.%i.log.gz</fileNamePattern>
+            <!-- keep 30 days' worth of history capped at 3GB total size -->
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>336</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${DEBUG_LAYOUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.apache.ibatis" level="DEBUG"/>
+    <logger name="java.sql.Connection" level="DEBUG"/>
+    <logger name="java.sql.Statement" level="DEBUG"/>
+    <logger name="java.sql.PreparedStatement" level="DEBUG"/>
+    <logger name="org.apache" level="INFO"/>
+    <logger name="httpclient" level="INFO"/>
+    <logger name="software.amazon" level="INFO"/>
+
+    <root level="${LEVEL_ROOT}">
+        <!-- <appender-ref ref="CONSOLE" /> -->
+        <appender-ref ref="FILE-ALL" />
+        <appender-ref ref="FILE-ERROR" />
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE-ALL-DATE" />
+    </root>
+
+</configuration>
