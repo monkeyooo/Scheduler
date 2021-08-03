@@ -12,14 +12,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableJpaRepositories
 @Configuration
 @EnableScheduling
-//@ServletComponentScan //tomcat啟動會出錯
 public class SchedulerApplication extends SpringBootServletInitializer {
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(SchedulerApplication.class);
     }
 
     public static void main(String[] args) {
-        System.setProperty("PYTHON_SCRIPT", "/Users/chuck/Desktop/Projects/Selenium-Utils/src/main/resources/ocr.py");
         SpringApplication.run(SchedulerApplication.class, args);
     }
 
